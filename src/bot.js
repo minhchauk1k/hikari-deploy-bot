@@ -1,11 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
 // import thư viện internal tự build
 const commands_1 = require("./core/commands");
 const messages_1 = require("./core/messages");
 const daily_service_1 = require("./core/services/daily.service");
 const file_editor_service_1 = require("./core/services/file-editor.service");
 require("dotenv/config");
+const express_1 = tslib_1.__importDefault(require("express"));
 const CONFIG = file_editor_service_1.FileEditorService.getBotConfig();
 // yêu cầu API và định nghĩa 1 con bot theo API
 const discord_js_1 = require("discord.js");
@@ -78,3 +80,15 @@ function configSpamChannel() {
     console.log(message_1.MSG.backEnd.info.create, 'Spam Channel: ' + _channel.name);
 }
 bot.login(process.env.BOT_TOKEN);
+// Fake Web Server to keep bot alive
+const app = (0, express_1.default)();
+app.set('port', process.env.PORT || 8080);
+app.get('/', (request, response) => {
+    response.send('Bot đang online!');
+});
+app.get('/ping', (req, res) => {
+    res.send('OK');
+});
+app.listen(process.env.PORT, () => {
+    console.log('Server đang dùng port: ' + app.get('port'));
+});
