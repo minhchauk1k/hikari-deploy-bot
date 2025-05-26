@@ -179,7 +179,6 @@ exports.DailyAPI = {
                     headers: headers
                 });
                 const data = await response.json();
-                console.log(data);
                 resolve((data.data ?? []).list ?? []);
             }
             catch (error) {

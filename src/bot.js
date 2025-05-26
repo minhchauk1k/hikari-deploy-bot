@@ -81,14 +81,15 @@ function configSpamChannel() {
 }
 bot.login(process.env.BOT_TOKEN);
 // Fake Web Server to keep bot alive
-const app = (0, express_1.default)();
-app.set('port', process.env.PORT || 8080);
-app.get('/', (request, response) => {
+const dummyApp = (0, express_1.default)();
+dummyApp.set('port', process.env.PORT || 8080);
+dummyApp.listen(process.env.PORT, () => {
+    console.log('--------------------------------------------------');
+    console.log('Dummy server đang dùng port: ' + dummyApp.get('port'));
+});
+dummyApp.get('/', (request, response) => {
     response.send('Bot đang online!');
 });
-app.get('/ping', (req, res) => {
-    res.send('OK');
-});
-app.listen(process.env.PORT, () => {
-    console.log('Server đang dùng port: ' + app.get('port'));
+dummyApp.get('/ping', (request, response) => {
+    response.send('OK!');
 });

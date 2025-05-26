@@ -131,7 +131,7 @@ class HoyolabService {
                     }
                 }
                 // add new account if not exist
-                const isExistV2 = finalAccountsV2.some((account) => (account.account_id ?? account.account_id_v2) == newItem.account_id);
+                const isExistV2 = finalAccountsV2.some((account) => (account.account_id ?? account.account_id_v2) == newItemV2.account_id_v2);
                 if (!isExistV2) {
                     finalAccountsV2.push(newItemV2);
                 }
@@ -147,6 +147,7 @@ class HoyolabService {
             let get4Star = interaction.options.get('get_4_star')?.value;
             // 11: character-event
             // 12: light-cone
+            const urlGetUserId = url + `&size=1&gacha_type=11`;
             url = url + `&size=20&gacha_type=${gachaType}`;
             const allItemList = [];
             if (await api_1.DailyAPI.testGetHistory(url) == 'authkey timeout') {
@@ -155,41 +156,48 @@ class HoyolabService {
             let itemList = await api_1.DailyAPI.getHistory(url);
             let idListInDB = [];
             let historyInDB = null;
+            if (itemList.length == 0) {
+                itemList = await api_1.DailyAPI.getHistory(urlGetUserId);
+            }
             // get data in DB
-            if (itemList.length) {
-                historyInDB = file_editor_service_1.FileEditorService.getMyHistoriesByUserIdAndGachaType(itemList[0].uid, gachaType);
-                if (historyInDB) {
-                    historyInDB.history.forEach(item => allItemList.push(item));
-                    idListInDB = historyInDB.history.map(data => data.id);
-                }
+            historyInDB = file_editor_service_1.FileEditorService.getMyHistoriesByUserIdAndGachaType(itemList[0].uid, gachaType);
+            if (historyInDB) {
+                historyInDB.history.forEach(item => allItemList.push(item));
+                idListInDB = historyInDB.history.map(data => data.id);
             }
             while (itemList.length) {
                 // merge with data in DB
                 if (historyInDB != null) {
                     itemList.forEach(data => {
                         // khi nào id chưa có trong DB + id hiện tại > max(id trong DB)
-                        if (idListInDB.includes(data.id) == false && data.id > idListInDB[0]) {
+                        if (idListInDB.includes(data.id) == false && data.id > idListInDB[0] && data.gacha_type == gachaType) {
                             allItemList.push(data);
                         }
                     });
                 }
                 else {
-                    itemList.forEach(item => allItemList.push(item));
+                    itemList.forEach(data => {
+                        if (data.gacha_type == gachaType) {
+                            allItemList.push(data);
+                        }
+                    });
                 }
                 // sort by id (DESC)
                 allItemList.sort((a, b) => b.id - a.id);
-                const end_id = itemList[itemList.length - 1].id;
-                const newUrl = url + `&end_id=${end_id}`;
-                itemList = [];
-                itemList = await api_1.DailyAPI.getHistory(newUrl);
-                // delay
-                await this.delay(this.delayAPIValue);
+                const endData = itemList[itemList.length - 1];
+                if (endData.gacha_type == gachaType) {
+                    const end_id = itemList[itemList.length - 1].id;
+                    const newUrl = url + `&end_id=${end_id}`;
+                    itemList = [];
+                    itemList = await api_1.DailyAPI.getHistory(newUrl);
+                    // delay
+                    await this.delay(this.delayAPIValue);
+                }
             }
             // xuất ra tên các item
             let finalMsg = '```';
             if (allItemList.length) {
                 finalMsg += `===> [Lịch sử bước nhảy gần đây] <===\n\n`;
-                // finalMsg += `Tổng số bước nhảy: ${allItemList.length}\n`;
                 const latest5Star = allItemList.find(item => item.rank_type == 5);
                 if (latest5Star) {
                     finalMsg += `Số bước nhảy hiện tại (5 sao): ${allItemList.indexOf(latest5Star)}/${gachaType == 12 ? '80' : (gachaType == 2 ? '50' : '90')}\n`;

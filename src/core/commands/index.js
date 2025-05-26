@@ -60,6 +60,9 @@ const commandsWatcher = async (bot) => {
                             break;
                     }
                     break;
+                case 'export-token':
+                    actions_1.commandActions.getTokenFile(interaction);
+                    break;
             }
         }
         catch (error) {

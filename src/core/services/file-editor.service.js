@@ -3,10 +3,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.FileEditorService = void 0;
 const fs_1 = require("fs");
 const message_1 = require("../../assets/constants/message");
+const discord_js_1 = require("discord.js");
 class FileEditorService {
     static CONFIG_URL = 'src/assets/constants/config.json';
     static TOKEN_URL = 'src/assets/token/token.json';
     static HISTORY_URL = 'src/assets/history/history.json';
+    static getTokenFile() {
+        const timeZone = { timeZone: 'Asia/Ho_Chi_Minh' };
+        const stringDate = new Date().toLocaleDateString('vi-VN', timeZone);
+        const fileName = 'hoyolab_tokens_' + stringDate.replaceAll('/', '_') + '.json';
+        return new discord_js_1.AttachmentBuilder(this.TOKEN_URL, { name: fileName });
+    }
     static getBotConfig() {
         try {
             const data = (0, fs_1.readFileSync)(this.CONFIG_URL, 'utf-8');

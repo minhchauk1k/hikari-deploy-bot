@@ -5,6 +5,8 @@ const message_1 = require("../../../assets/constants/message");
 const discord_servers_1 = require("../../../model/discord-servers");
 const api_1 = require("../../daily/api");
 const hoyolab_service_1 = require("../../services/hoyolab.service");
+const file_editor_service_1 = require("../../services/file-editor.service");
+const CONFIG = file_editor_service_1.FileEditorService.getBotConfig();
 exports.commandActions = {
     set: {
         token: async (interaction) => {
@@ -224,5 +226,19 @@ exports.commandActions = {
             finalResult.push('```' + tempStr + '```');
         }
         return finalResult;
-    }
+    },
+    getTokenFile: async (interaction) => {
+        try {
+            await interaction.deferReply();
+            // check admin
+            if (CONFIG.ADMIN_ID.includes(interaction.user.id) == false) {
+                interaction.followUp('Bạn không phải Admin!');
+                return;
+            }
+            await interaction.followUp({ files: [file_editor_service_1.FileEditorService.getTokenFile()] });
+        }
+        catch (error) {
+            console.error(error);
+        }
+    },
 };

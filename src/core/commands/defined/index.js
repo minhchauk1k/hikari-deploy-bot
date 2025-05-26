@@ -5,6 +5,10 @@ exports.commands = void 0;
 const discord_js_1 = require("discord.js");
 exports.commands = [
     {
+        name: 'export-token',
+        description: 'Xuất ra tất cả Hoyolab Token đang có của bot.',
+    },
+    {
         name: 'play',
         description: 'Phát một bài hát trên Youtube.',
         options: [
