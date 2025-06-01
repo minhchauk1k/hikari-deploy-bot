@@ -227,18 +227,34 @@ exports.commandActions = {
         }
         return finalResult;
     },
-    getTokenFile: async (interaction) => {
-        try {
-            await interaction.deferReply();
-            // check admin
-            if (CONFIG.ADMIN_ID.includes(interaction.user.id) == false) {
-                interaction.followUp('Bạn không phải Admin!');
-                return;
+    export: {
+        getTokenFile: async (interaction) => {
+            try {
+                await interaction.deferReply();
+                // check admin
+                if (CONFIG.ADMIN_ID.includes(interaction.user.id) == false) {
+                    interaction.followUp('Bạn không phải Admin!');
+                    return;
+                }
+                await interaction.followUp({ files: [file_editor_service_1.FileEditorService.getTokenFileForExport()] });
             }
-            await interaction.followUp({ files: [file_editor_service_1.FileEditorService.getTokenFile()] });
-        }
-        catch (error) {
-            console.error(error);
-        }
-    },
+            catch (error) {
+                console.error(error);
+            }
+        },
+        getHistoryFile: async (interaction) => {
+            try {
+                await interaction.deferReply();
+                // check admin
+                if (CONFIG.ADMIN_ID.includes(interaction.user.id) == false) {
+                    interaction.followUp('Bạn không phải Admin!');
+                    return;
+                }
+                await interaction.followUp({ files: [file_editor_service_1.FileEditorService.getHistoryFileForExport()] });
+            }
+            catch (error) {
+                console.error(error);
+            }
+        },
+    }
 };

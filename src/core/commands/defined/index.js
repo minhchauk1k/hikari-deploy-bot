@@ -5,8 +5,20 @@ exports.commands = void 0;
 const discord_js_1 = require("discord.js");
 exports.commands = [
     {
-        name: 'export-token',
-        description: 'Xuất ra tất cả Hoyolab Token đang có của bot.',
+        name: 'export',
+        description: 'Xuất dữ liệu đang có của bot.',
+        options: [
+            {
+                name: 'token',
+                type: discord_js_1.ApplicationCommandOptionType.Subcommand,
+                description: 'Xuất ra tất cả [Hoyolab Token] đang có của bot.',
+            },
+            {
+                name: 'history',
+                type: discord_js_1.ApplicationCommandOptionType.Subcommand,
+                description: 'Xuất ra tất cả [Lịch Sử Bước Nhảy] đang có của bot.',
+            },
+        ]
     },
     {
         name: 'play',

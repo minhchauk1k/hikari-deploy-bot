@@ -8,11 +8,17 @@ class FileEditorService {
     static CONFIG_URL = 'src/assets/constants/config.json';
     static TOKEN_URL = 'src/assets/token/token.json';
     static HISTORY_URL = 'src/assets/history/history.json';
-    static getTokenFile() {
+    static getTokenFileForExport() {
         const timeZone = { timeZone: 'Asia/Ho_Chi_Minh' };
         const stringDate = new Date().toLocaleDateString('vi-VN', timeZone);
         const fileName = 'hoyolab_tokens_' + stringDate.replaceAll('/', '_') + '.json';
         return new discord_js_1.AttachmentBuilder(this.TOKEN_URL, { name: fileName });
+    }
+    static getHistoryFileForExport() {
+        const timeZone = { timeZone: 'Asia/Ho_Chi_Minh' };
+        const stringDate = new Date().toLocaleDateString('vi-VN', timeZone);
+        const fileName = 'hoyolab_history_' + stringDate.replaceAll('/', '_') + '.json';
+        return new discord_js_1.AttachmentBuilder(this.HISTORY_URL, { name: fileName });
     }
     static getBotConfig() {
         try {
