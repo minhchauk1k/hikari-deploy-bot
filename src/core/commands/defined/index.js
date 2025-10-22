@@ -204,6 +204,44 @@ exports.commands = [
                         required: false,
                     }
                 ]
+            },
+            {
+                name: 'character-collab',
+                type: discord_js_1.ApplicationCommandOptionType.Subcommand,
+                description: 'Bước Nhảy Nhân Vật Hợp Tác.',
+                options: [
+                    {
+                        name: 'url',
+                        type: discord_js_1.ApplicationCommandOptionType.String,
+                        description: 'Đường dẫn để gọi tới máy chủ',
+                        required: true,
+                    },
+                    {
+                        name: 'get_4_star',
+                        type: discord_js_1.ApplicationCommandOptionType.Boolean,
+                        description: 'Có hiển thị 4 sao hay không',
+                        required: false,
+                    }
+                ]
+            },
+            {
+                name: 'light-cone-collab',
+                type: discord_js_1.ApplicationCommandOptionType.Subcommand,
+                description: 'Bước Nhảy Nón Ánh Sáng Hợp Tác.',
+                options: [
+                    {
+                        name: 'url',
+                        type: discord_js_1.ApplicationCommandOptionType.String,
+                        description: 'Đường dẫn để gọi tới máy chủ',
+                        required: true,
+                    },
+                    {
+                        name: 'get_4_star',
+                        type: discord_js_1.ApplicationCommandOptionType.Boolean,
+                        description: 'Có hiển thị 4 sao hay không',
+                        required: false,
+                    }
+                ]
             }
         ]
     },

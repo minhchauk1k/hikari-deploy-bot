@@ -17,6 +17,7 @@ const GENSHIN_NAME = 'Genshin Impact';
 const ZZZ_NAME = 'Zenless Zone Zero';
 const EXCEPT_CODE = [0, -5003, -10002];
 // 0: OK
+// 10001: authkey timeout
 // -10002: chưa tạo nhân vật
 // -5003: đã điểm danh rồi
 exports.DailyAPI = {
@@ -49,23 +50,23 @@ exports.DailyAPI = {
                 let accountIndex = 1;
                 const accounts = user.accounts;
                 for (const account of accounts) {
-                    const gameInfoList = await exports.DailyAPI.getInfoByToken(account);
+                    const gameInfoList = await exports.DailyAPI.getInfoByToken(account, user);
                     if (!gameInfoList.length) {
                         errorValue += '[User: @' + user.username + `, Tài khoản #${accountIndex}] => Chủ nhân vui lòng kiểm tra lại TOKEN ~` + '\n\t';
                     }
                     for (const gameInfo of gameInfoList) {
                         const result = await exports.DailyAPI.dailyByGame(user, account, gameInfo.game_id);
                         if (result === '') {
-                            if (gameInfo.game_id == 1 && !gameInfo.nickname.includes('玩家') && gameInfo.nickname.length) {
+                            if (gameInfo.game_id == 1 && gameInfo.level != 1 && gameInfo.nickname.length) {
                                 hi3List.push(' ' + gameInfo.nickname);
                             }
-                            if (gameInfo.game_id == 2 && gameInfo.nickname.length) {
+                            if (gameInfo.game_id == 2 && gameInfo.level != 1 && gameInfo.nickname.length) {
                                 genshinList.push(' ' + gameInfo.nickname);
                             }
-                            if (gameInfo.game_id == 6 && gameInfo.nickname != 'Khách Vô Danh' && gameInfo.nickname.length) {
+                            if (gameInfo.game_id == 6 && gameInfo.level != 1 && gameInfo.nickname.length) {
                                 hsrList.push(' ' + gameInfo.nickname);
                             }
-                            if (gameInfo.game_id == 8 && gameInfo.nickname.length) {
+                            if (gameInfo.game_id == 8 && gameInfo.level != 1 && gameInfo.nickname.length) {
                                 zzzList.push(' ' + gameInfo.nickname);
                             }
                         }
@@ -164,7 +165,7 @@ exports.DailyAPI = {
             return DAILY_ZZZ_URL;
         }
     },
-    getInfoByToken: (account) => {
+    getInfoByToken: (account, user) => {
         return new Promise(async (resolve, reject) => {
             try {
                 const cookie = exports.DailyAPI.createCookie(account);
@@ -179,6 +180,10 @@ exports.DailyAPI = {
                     headers: headers
                 });
                 const data = await response.json();
+                // log error info
+                if (data.data == null) {
+                    console.log(`API getInfoByToken: [User: @${user.username}] => ${JSON.stringify(data)} ~`);
+                }
                 resolve((data.data ?? []).list ?? []);
             }
             catch (error) {

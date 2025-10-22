@@ -196,6 +196,56 @@ exports.commandActions = {
                 console.error(message_1.MSG.backEnd.error.default, error);
             }
         },
+        character_collab: async (interaction) => {
+            try {
+                await interaction.deferReply();
+                const result = await hoyolab_service_1.HoyolabService.getHistory(interaction, 21);
+                if (result.length <= 2000) {
+                    await interaction.followUp(result);
+                }
+                else {
+                    await interaction.followUp('Xem kết quả bên dưới:');
+                    exports.commandActions.handleResultLength(result)?.forEach(async (data) => await interaction.channel?.send(data));
+                }
+                try {
+                    // run in background for sync data
+                    await hoyolab_service_1.HoyolabService.getHistory(interaction, 1);
+                    await hoyolab_service_1.HoyolabService.getHistory(interaction, 11);
+                    await hoyolab_service_1.HoyolabService.getHistory(interaction, 12);
+                }
+                catch (error) {
+                    // do nothing
+                }
+            }
+            catch (error) {
+                console.error(message_1.MSG.backEnd.error.default, error);
+            }
+        },
+        light_cone_collab: async (interaction) => {
+            try {
+                await interaction.deferReply();
+                const result = await hoyolab_service_1.HoyolabService.getHistory(interaction, 22);
+                if (result.length <= 2000) {
+                    await interaction.followUp(result);
+                }
+                else {
+                    await interaction.followUp('Xem kết quả bên dưới:');
+                    exports.commandActions.handleResultLength(result)?.forEach(async (data) => await interaction.channel?.send(data));
+                }
+                try {
+                    // run in background for sync data
+                    await hoyolab_service_1.HoyolabService.getHistory(interaction, 1);
+                    await hoyolab_service_1.HoyolabService.getHistory(interaction, 2);
+                    await hoyolab_service_1.HoyolabService.getHistory(interaction, 11);
+                }
+                catch (error) {
+                    // do nothing
+                }
+            }
+            catch (error) {
+                console.error(message_1.MSG.backEnd.error.default, error);
+            }
+        },
     },
     handleResultLength: (result) => {
         let tempStr = '';

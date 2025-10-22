@@ -5,11 +5,15 @@ const message_1 = require("../../assets/constants/message");
 const api_1 = require("../daily/api");
 const file_editor_service_1 = require("./file-editor.service");
 class HoyolabService {
-    static delayAPIValue = 0; // 0s
+    static delayAPIValue = 1000; // 0s
     static CHARACTER_EVENT = 'Bước Nhảy Sự Kiện Nhân Vật.';
     static CHARACTER_STANDARD = 'Bước Nhảy Chòm Sao (Banner thường).';
     static CHARACTER_BEGINER = 'Bước Nhảy Đầu Tiên (Banner tân thủ).';
+    static CHARACTER_COLLAB = 'Bước Nhảy Nhân Vật Hợp Tác.';
     static LIGHT_CONE = 'Bước Nhảy Sự Kiện Nón Ánh Sáng.';
+    static LIGHT_CONE_COLLAB = 'Bước Nhảy Nón Ánh Sáng Hợp Tác.';
+    static NORMAL_BANNER = [1, 2, 11, 12];
+    static COLLAB_BANNER = [21, 22];
     static async infoByInteraction(interaction) {
         const myUser = file_editor_service_1.FileEditorService.getMyUserByUserId(interaction.user.id);
         let finalMsg = '```';
@@ -17,7 +21,7 @@ class HoyolabService {
         if (myUser) {
             for (const account of myUser.accounts) {
                 finalMsg += `\nTài khoản #${++index}:\n`;
-                const gameInfos = await api_1.DailyAPI.getInfoByToken(account);
+                const gameInfos = await api_1.DailyAPI.getInfoByToken(account, myUser);
                 if (!gameInfos.length) {
                     finalMsg += 'Chủ nhân vui lòng kiểm tra lại TOKEN ~\n';
                 }
@@ -69,8 +73,12 @@ class HoyolabService {
                 const newItem = {};
                 newItem.account_id = account_id;
                 newItem.cookie_token = cookie_token;
+                // create dummy IMyUser for log
+                const myUser = {};
+                myUser.userId = interaction.user.id;
+                myUser.username = interaction.user.globalName ?? '';
                 // test token by API
-                const resultNewItem = await api_1.DailyAPI.getInfoByToken(newItem);
+                const resultNewItem = await api_1.DailyAPI.getInfoByToken(newItem, myUser);
                 if (resultNewItem.length == 0) {
                     return message_1.MSG.frontEnd.error.invalidToken;
                 }
@@ -145,17 +153,25 @@ class HoyolabService {
             // tìm kiếm dựa theo "name" đã định nghĩa trong danh sách ApplicationCommandData
             let url = interaction.options.get('url')?.value;
             let get4Star = interaction.options.get('get_4_star')?.value;
+            if (this.COLLAB_BANNER.includes(gachaType)) {
+                url = url.replace('/getGachaLog?', '/getLdGachaLog?');
+            }
+            if (this.NORMAL_BANNER.includes(gachaType)) {
+                url = url.replace('/getLdGachaLog?', '/getGachaLog?');
+            }
             // 11: character-event
             // 12: light-cone
             const urlGetUserId = url + `&size=1&gacha_type=11`;
-            url = url + `&size=20&gacha_type=${gachaType}`;
+            const urlForFirstCall = url + `&size=20&gacha_type=${gachaType}`;
             const allItemList = [];
-            if (await api_1.DailyAPI.testGetHistory(url) == 'authkey timeout') {
+            if (await api_1.DailyAPI.testGetHistory(urlForFirstCall) == 'authkey timeout') {
                 return message_1.MSG.frontEnd.error.invalidURL;
             }
-            let itemList = await api_1.DailyAPI.getHistory(url);
+            let itemList = await api_1.DailyAPI.getHistory(urlForFirstCall);
             let idListInDB = [];
             let historyInDB = null;
+            // console.log('urlForFirstCall', urlForFirstCall);
+            // console.log('itemList', itemList);
             if (itemList.length == 0) {
                 itemList = await api_1.DailyAPI.getHistory(urlGetUserId);
             }
@@ -187,9 +203,9 @@ class HoyolabService {
                 const endData = itemList[itemList.length - 1];
                 if (endData.gacha_type == gachaType) {
                     const end_id = itemList[itemList.length - 1].id;
-                    const newUrl = url + `&end_id=${end_id}`;
+                    const urlForNextCall = urlForFirstCall + `&end_id=${end_id}`;
                     itemList = [];
-                    itemList = await api_1.DailyAPI.getHistory(newUrl);
+                    itemList = await api_1.DailyAPI.getHistory(urlForNextCall);
                     // delay
                     await this.delay(this.delayAPIValue);
                 }
@@ -200,7 +216,7 @@ class HoyolabService {
                 finalMsg += `===> [Lịch sử bước nhảy gần đây] <===\n\n`;
                 const latest5Star = allItemList.find(item => item.rank_type == 5);
                 if (latest5Star) {
-                    finalMsg += `Số bước nhảy hiện tại (5 sao): ${allItemList.indexOf(latest5Star)}/${gachaType == 12 ? '80' : (gachaType == 2 ? '50' : '90')}\n`;
+                    finalMsg += `Số bước nhảy hiện tại (5 sao): ${allItemList.indexOf(latest5Star)}/${(gachaType == 12 || gachaType == 22) ? '80' : (gachaType == 2 ? '50' : '90')}\n`;
                 }
                 const latest4Star = allItemList.find(item => item.rank_type == 4);
                 if (latest4Star) {
@@ -212,10 +228,10 @@ class HoyolabService {
                     if (item.rank_type == 5) {
                         const subLatest5Star = allItemList.find(sub => sub.rank_type == 5 && sub.id < item.id);
                         if (subLatest5Star) {
-                            finalMsg += `[Ngày]: ${item.time} - [Bước nhảy]: ${(allItemList.indexOf(subLatest5Star) - allItemList.indexOf(item)).toString().padStart(2, '0')}/${gachaType == 12 ? '80' : (gachaType == 2 ? '50' : '90')} - [${item.item_type}]: ${item.name}\n`;
+                            finalMsg += `[Ngày]: ${item.time} - [Bước nhảy]: ${(allItemList.indexOf(subLatest5Star) - allItemList.indexOf(item)).toString().padStart(2, '0')}/${(gachaType == 12 || gachaType == 22) ? '80' : (gachaType == 2 ? '50' : '90')} - [${item.item_type}]: ${item.name}\n`;
                         }
                         else {
-                            finalMsg += `[Ngày]: ${item.time} - [Bước nhảy]: ${(allItemList.length - allItemList.indexOf(item)).toString().padStart(2, '0')}/${gachaType == 12 ? '80' : (gachaType == 2 ? '50' : '90')} - [${item.item_type}]: ${item.name}\n`;
+                            finalMsg += `[Ngày]: ${item.time} - [Bước nhảy]: ${(allItemList.length - allItemList.indexOf(item)).toString().padStart(2, '0')}/${(gachaType == 12 || gachaType == 22) ? '80' : (gachaType == 2 ? '50' : '90')} - [${item.item_type}]: ${item.name}\n`;
                         }
                     }
                     // hiển thị dữ liệu 4 sao
@@ -266,6 +282,12 @@ class HoyolabService {
         }
         if (gachaType == 12) {
             return this.LIGHT_CONE;
+        }
+        if (gachaType == 21) {
+            return this.CHARACTER_COLLAB;
+        }
+        if (gachaType == 22) {
+            return this.LIGHT_CONE_COLLAB;
         }
     }
 }

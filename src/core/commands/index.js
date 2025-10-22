@@ -58,6 +58,12 @@ const commandsWatcher = async (bot) => {
                         case 'light-cone':
                             actions_1.commandActions.history.light_cone(interaction);
                             break;
+                        case 'character-collab':
+                            actions_1.commandActions.history.character_collab(interaction);
+                            break;
+                        case 'light-cone-collab':
+                            actions_1.commandActions.history.light_cone_collab(interaction);
+                            break;
                     }
                     break;
                 case 'export':
