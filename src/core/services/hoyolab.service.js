@@ -49,12 +49,12 @@ class HoyolabService {
         const V2_HY = '_hy';
         const V2_V2 = 'v2_';
         let myUser = file_editor_service_1.FileEditorService.getMyUserByUserId(interaction.user.id);
-        if (!myUser) {
-            myUser = {
-                userId: interaction.user.id,
-                username: interaction.user.globalName ?? '',
-                accounts: []
-            };
+        if (myUser == null) {
+            const tempMyUser = {};
+            tempMyUser.userId = interaction.user.id;
+            tempMyUser.username = interaction.user.globalName ?? '';
+            tempMyUser.accounts = [];
+            myUser = tempMyUser;
         }
         switch (interaction.options.data[0].name) {
             case 'token':
@@ -73,10 +73,6 @@ class HoyolabService {
                 const newItem = {};
                 newItem.account_id = account_id;
                 newItem.cookie_token = cookie_token;
-                // create dummy IMyUser for log
-                const myUser = {};
-                myUser.userId = interaction.user.id;
-                myUser.username = interaction.user.globalName ?? '';
                 // test token by API
                 const resultNewItem = await api_1.DailyAPI.getInfoByToken(newItem, myUser);
                 if (resultNewItem.length == 0) {
