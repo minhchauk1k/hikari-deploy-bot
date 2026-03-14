@@ -99,6 +99,7 @@ exports.commandActions = {
         character_event: async (interaction) => {
             try {
                 await interaction.deferReply();
+                console.log("[START] character_event");
                 const result = await hoyolab_service_1.HoyolabService.getHistory(interaction, 11);
                 if (result.length <= 2000) {
                     await interaction.followUp(result);
@@ -107,11 +108,14 @@ exports.commandActions = {
                     await interaction.followUp('Xem kết quả bên dưới:');
                     exports.commandActions.handleResultLength(result)?.forEach(async (data) => await interaction.channel?.send(data));
                 }
+                console.log("[END] character_event");
                 try {
                     // run in background for sync data
+                    console.log("[START] run in background for sync data");
                     await hoyolab_service_1.HoyolabService.getHistory(interaction, 1);
                     await hoyolab_service_1.HoyolabService.getHistory(interaction, 2);
                     await hoyolab_service_1.HoyolabService.getHistory(interaction, 12);
+                    console.log("[END] run in background for sync data");
                 }
                 catch (error) {
                     // do nothing
@@ -124,6 +128,7 @@ exports.commandActions = {
         character_standard: async (interaction) => {
             try {
                 await interaction.deferReply();
+                console.log("[START] character_standard");
                 const result = await hoyolab_service_1.HoyolabService.getHistory(interaction, 1);
                 if (result.length <= 2000) {
                     await interaction.followUp(result);
@@ -132,11 +137,14 @@ exports.commandActions = {
                     await interaction.followUp('Xem kết quả bên dưới:');
                     exports.commandActions.handleResultLength(result)?.forEach(async (data) => await interaction.channel?.send(data));
                 }
+                console.log("[END] character_standard");
                 try {
                     // run in background for sync data
+                    console.log("[START] run in background for sync data");
                     await hoyolab_service_1.HoyolabService.getHistory(interaction, 2);
                     await hoyolab_service_1.HoyolabService.getHistory(interaction, 11);
                     await hoyolab_service_1.HoyolabService.getHistory(interaction, 12);
+                    console.log("[END] run in background for sync data");
                 }
                 catch (error) {
                     // do nothing
@@ -149,6 +157,7 @@ exports.commandActions = {
         character_beginer: async (interaction) => {
             try {
                 await interaction.deferReply();
+                console.log("[START] character_beginer");
                 const result = await hoyolab_service_1.HoyolabService.getHistory(interaction, 2);
                 if (result.length <= 2000) {
                     await interaction.followUp(result);
@@ -157,11 +166,14 @@ exports.commandActions = {
                     await interaction.followUp('Xem kết quả bên dưới:');
                     exports.commandActions.handleResultLength(result)?.forEach(async (data) => await interaction.channel?.send(data));
                 }
+                console.log("[END] character_beginer");
                 try {
                     // run in background for sync data
+                    console.log("[START] run in background for sync data");
                     await hoyolab_service_1.HoyolabService.getHistory(interaction, 1);
                     await hoyolab_service_1.HoyolabService.getHistory(interaction, 11);
                     await hoyolab_service_1.HoyolabService.getHistory(interaction, 12);
+                    console.log("[END] run in background for sync data");
                 }
                 catch (error) {
                     // do nothing
@@ -174,6 +186,7 @@ exports.commandActions = {
         light_cone: async (interaction) => {
             try {
                 await interaction.deferReply();
+                console.log("[START] light_cone");
                 const result = await hoyolab_service_1.HoyolabService.getHistory(interaction, 12);
                 if (result.length <= 2000) {
                     await interaction.followUp(result);
@@ -182,11 +195,14 @@ exports.commandActions = {
                     await interaction.followUp('Xem kết quả bên dưới:');
                     exports.commandActions.handleResultLength(result)?.forEach(async (data) => await interaction.channel?.send(data));
                 }
+                console.log("[END] light_cone");
                 try {
                     // run in background for sync data
+                    console.log("[START] run in background for sync data");
                     await hoyolab_service_1.HoyolabService.getHistory(interaction, 1);
                     await hoyolab_service_1.HoyolabService.getHistory(interaction, 2);
                     await hoyolab_service_1.HoyolabService.getHistory(interaction, 11);
+                    console.log("[END] run in background for sync data");
                 }
                 catch (error) {
                     // do nothing
@@ -199,6 +215,7 @@ exports.commandActions = {
         character_collab: async (interaction) => {
             try {
                 await interaction.deferReply();
+                console.log("[START] character_collab");
                 const result = await hoyolab_service_1.HoyolabService.getHistory(interaction, 21);
                 if (result.length <= 2000) {
                     await interaction.followUp(result);
@@ -207,11 +224,14 @@ exports.commandActions = {
                     await interaction.followUp('Xem kết quả bên dưới:');
                     exports.commandActions.handleResultLength(result)?.forEach(async (data) => await interaction.channel?.send(data));
                 }
+                console.log("[END] character_collab");
                 try {
                     // run in background for sync data
+                    console.log("[START] run in background for sync data");
                     await hoyolab_service_1.HoyolabService.getHistory(interaction, 1);
                     await hoyolab_service_1.HoyolabService.getHistory(interaction, 11);
                     await hoyolab_service_1.HoyolabService.getHistory(interaction, 12);
+                    console.log("[END] run in background for sync data");
                 }
                 catch (error) {
                     // do nothing
@@ -224,6 +244,7 @@ exports.commandActions = {
         light_cone_collab: async (interaction) => {
             try {
                 await interaction.deferReply();
+                console.log("[START] light_cone_collab");
                 const result = await hoyolab_service_1.HoyolabService.getHistory(interaction, 22);
                 if (result.length <= 2000) {
                     await interaction.followUp(result);
@@ -232,11 +253,14 @@ exports.commandActions = {
                     await interaction.followUp('Xem kết quả bên dưới:');
                     exports.commandActions.handleResultLength(result)?.forEach(async (data) => await interaction.channel?.send(data));
                 }
+                console.log("[END] light_cone_collab");
                 try {
                     // run in background for sync data
+                    console.log("[START] run in background for sync data");
                     await hoyolab_service_1.HoyolabService.getHistory(interaction, 1);
                     await hoyolab_service_1.HoyolabService.getHistory(interaction, 2);
                     await hoyolab_service_1.HoyolabService.getHistory(interaction, 11);
+                    console.log("[END] run in background for sync data");
                 }
                 catch (error) {
                     // do nothing
