@@ -56,6 +56,13 @@ class HoyolabService {
                 accounts: []
             };
         }
+        if (myUser == null) {
+            const tempMyUser = {};
+            tempMyUser.userId = interaction.user.id;
+            tempMyUser.username = interaction.user.globalName ?? '';
+            tempMyUser.accounts = [];
+            myUser = tempMyUser;
+        }
         switch (interaction.options.data[0].name) {
             case 'token':
                 // tìm kiếm dựa theo "name" đã định nghĩa trong danh sách ApplicationCommandData
@@ -73,10 +80,6 @@ class HoyolabService {
                 const newItem = {};
                 newItem.account_id = account_id;
                 newItem.cookie_token = cookie_token;
-                // create dummy IMyUser for log
-                const myUser = {};
-                myUser.userId = interaction.user.id;
-                myUser.username = interaction.user.globalName ?? '';
                 // test token by API
                 const resultNewItem = await api_1.DailyAPI.getInfoByToken(newItem, myUser);
                 if (resultNewItem.length == 0) {
@@ -124,7 +127,7 @@ class HoyolabService {
                 newItemV2.account_mid_v2 = account_mid_v2;
                 newItemV2.cookie_token_v2 = cookie_token_v2;
                 // test token by API
-                const resultNewItemV2 = await api_1.DailyAPI.getInfoByToken(newItemV2);
+                const resultNewItemV2 = await api_1.DailyAPI.getInfoByToken(newItemV2, myUser);
                 if (resultNewItemV2.length == 0) {
                     return message_1.MSG.frontEnd.error.invalidToken;
                 }
